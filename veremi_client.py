@@ -44,6 +44,11 @@ class VeremiClient(VeremiBase, fl.client.NumPyClient):
         }
         return self.model.get_weights(), len(self.train_data), result
 
+    def evaluate(self, parameters, config):
+        self.model.set_weights(parameters)
+        loss, accuracy = self.model.evaluate(self.test_data, self.test_labels, verbose=1)
+        return loss, len(self.test_data), {"accuracy": accuracy}
+
 
 if __name__ == "__main__":
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))

@@ -12,8 +12,8 @@ class Colors:
 
 class Config:
     bsm = "23bsm"
-    csv = f"../dismiss-bsm-vtc2023/models/vtc/dismiss/{bsm}/preprocessing/allmsg/allMsg-new-preds.csv"
-    fedcsv = f"../dismiss-bsm-vtc2023/models/vtc/dismiss/{bsm}/preprocessing/allmsg/fed-test.csv"
+    csv = f"./VeReMi.csv"
+    fedcsv = f"./VeReMi.csv"
     model_type = "mlp"
     label = "atk_2"
     feature = "feat4"

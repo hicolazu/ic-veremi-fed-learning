@@ -2,7 +2,7 @@ import os
 from abc import ABC
 from metrics import *
 from dataset import load_veremi
-from veremi.config import Config, Colors
+from config import Config, Colors
 
 os.environ["CUDA_VISIBLE_DEVICES"] = '-1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'

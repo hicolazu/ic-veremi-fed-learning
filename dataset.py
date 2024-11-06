@@ -4,7 +4,7 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MultiLabelBinarizer
 
-from veremi.config import Config
+from config import Config
 
 
 def load_veremi(csv_file: str, feature: str, label: str, delimiter=','):
