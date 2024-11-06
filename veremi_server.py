@@ -11,14 +11,13 @@ from veremi_base import VeremiBase
 from matplotlib import pyplot as plt
 from flwr.common import NDArrays, Scalar
 from flwr.common.logger import FLOWER_LOGGER
-from veremi.veremi_fedavg import VeremiFedAvg
+from veremi_fedavg import VeremiFedAvg
 from typing import Optional, Tuple, Dict, Any
 from sklearn.metrics import precision_recall_curve, classification_report
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, auc
 from sklearn.metrics import PrecisionRecallDisplay, RocCurveDisplay, roc_curve
 from sklearn.metrics import precision_score, recall_score, accuracy_score, f1_score
 
-matplotlib.use("tkAgg")
 tf.get_logger().setLevel('ERROR')
 
 FLOWER_LOGGER.setLevel(logging.WARNING)

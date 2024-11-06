@@ -1,7 +1,7 @@
 import os
 import flwr
 import numpy as np
-from veremi.config import Config
+from config import Config
 from flwr.server.strategy.fedavg import FedAvg
 from flwr.server.client_proxy import ClientProxy
 from typing import List, Tuple, Union, Optional, Dict, Callable

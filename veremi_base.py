@@ -66,10 +66,7 @@ class VeremiBase(ABC):
         self.model.summary()
 
     def load_veremi(self):
-        # Get file name
-        fname = os.path.basename(os.path.normpath(Config.csv))
-
-        print(f"{Colors.WARNING}Loading dataset '{Config.bsm} - {fname}' in {self.__class__.__name__}...{Colors.ENDC}")
+        print("Loading dataset in " + self.__class__.__name__ + "...")
         self.train_data, self.test_data, self.train_labels, self.test_labels, self.lb, self.dataset = load_veremi(
             self.data_file,
             feature=self.feature,
