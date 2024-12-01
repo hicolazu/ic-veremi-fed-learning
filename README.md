@@ -71,10 +71,9 @@ The aggregated weights are used to update the global model, which is then redist
 - The dataset includes features like RSSI (Received Signal Strength Indicator), AoA (Angle of Arrival), distance, and conformity measures, with a target variable `attackerType` for classification. The data preprocessing steps involve normalization and label binarization, essential for preparing the data for effective model training.
 
 ### CSV
-- To generate de csv file, download the simulations files from https://github.com/VeReMi-dataset/VeReMi/releases
-- Unzip them into a directory
-- Copy scripts/extract.py to the directory where the simulations are
-- Run the script with python3 extract.py
+- To generate de csv file, run scripts/download_files.py to download all the simulations from https://github.com/VeReMi-dataset/VeReMi/releases
+- Then, run scripts/extract_v2.py to extract the log files and create csv
+- At the end, run scripts/split.py to divide the dataset into 3 cvs, 1 for the server and 2 for the clients trainning
 
 ### Requirements
 
