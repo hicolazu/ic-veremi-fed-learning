@@ -11,50 +11,8 @@ def load_veremi(csv_file: str, feature: str, label: str, delimiter=','):
     # Import VeReMi Dataset
     data = pd.read_csv(csv_file, delimiter=delimiter)
 
-    # select columns
-    columns = []
-    for column in data.columns.values:
-        if feature == 'feat1':
-            if 'RSSI' in column:
-                columns.append(column)
-            elif 'distance' in column:
-                columns.append(column)
-        elif feature == 'feat2':
-            if 'conformity' in column and '0' not in column:
-                columns.append(column)
-        elif feature == 'feat3':
-            if 'RSSI' in column and '0' not in column:
-                columns.append(column)
-            elif 'distance' in column and '0' not in column:
-                columns.append(column)
-            elif 'conformity' in column and '0' not in column:
-                columns.append(column)
-        elif feature == 'feat4':
-            if 'RSSI' in column:
-                columns.append(column)
-            elif 'aoa' in column:
-                columns.append(column)
-            elif 'distance' in column:
-                columns.append(column)
-            elif 'conformity' in column and '0' not in column:
-                columns.append(column)
-    columns.append('attackerType')
-
-    # process target values
-    pos_label = 1
-    if label == 'multiclass':
-        data = data[columns]
-    elif label == 'binary':
-        data = data[columns]
-        data['attackerType'].loc[data['attackerType'] != 0] = pos_label
-    else:
-        pos_label = int(label.split("_")[1])
-        data = data[columns]
-        data = data.loc[(data['attackerType'] == 0) | (data['attackerType'] == pos_label)]
-
     data_normal = data.loc[data['attackerType'] == 0]
     data_atk = data.loc[data['attackerType'] != 0]
-    # atk_size = int(data_atk.shape[0] * 1.5)
     atk_size = int(data_atk.shape[0])
     data = pd.concat([data_normal.sample(atk_size), data_atk])
     data = shuffle(data)

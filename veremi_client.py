@@ -44,17 +44,21 @@ class VeremiClient(VeremiBase, fl.client.NumPyClient):
         }
         return self.model.get_weights(), len(self.train_data), result
 
-    def evaluate(self, parameters, config):
-        self.model.set_weights(parameters)
-        loss, accuracy = self.model.evaluate(self.test_data, self.test_labels, verbose=1)
-        return loss, len(self.test_data), {"accuracy": accuracy}
-
-
 if __name__ == "__main__":
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    in_filename = int(input("Escolha o arquivo de treino (0 - VeReMi_1.csv, 1 - VeReMi_2.csv, 2 - VeReMi_3.csv): "))
+
+    filename = ''
+
+    if in_filename == 0:
+        filename = 'VeReMi_1.csv'
+    elif in_filename == 1:
+        filename = 'VeReMi_2.csv'
+    elif in_filename == 2:
+        filename = 'VeReMi_3.csv'
 
     # Start Client
     fl.client.start_numpy_client(
         server_address="[::]:8080",
-        client=VeremiClient(Config.csv, Config.model_type, Config.label, Config.feature, Config.output_activation)
+        client=VeremiClient(Config.csv + filename, Config.model_type, Config.label, Config.feature, Config.output_activation)
     )

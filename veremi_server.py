@@ -12,6 +12,9 @@ from matplotlib import pyplot as plt
 from flwr.common import NDArrays, Scalar
 from flwr.common.logger import FLOWER_LOGGER
 from veremi_fedavg import VeremiFedAvg
+from veremi_fedavgm import VeremiFedAvgM
+from veremi_krum import VeremiKrum
+from veremi_fedtrimmedavg import VeremiFedTrimmedAvg
 from typing import Optional, Tuple, Dict, Any
 from sklearn.metrics import precision_recall_curve, classification_report
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, auc
@@ -33,18 +36,19 @@ class VeremiServer(VeremiBase):
             rounds: int = 2,
             batch_size: int = 64,
             epochs: int = 10,
-            activation: str = "softmax"
+            activation: str = "softmax",
+            stg = "avg"
     ):
         super().__init__(data_file, model_type, label, feature, activation)
         self.rounds = rounds
         self.batch_size = batch_size
         self.epochs = epochs
-        self.output_path = ""
         self.best_f1_score = 0
-        self.output_path = f"results/{Config.bsm}/{feature}/{label}/"
+        self.output_path = f"results/{Config.bsm}/{feature}/{label}/{stg}/"
         self.server_strategy = None
         self.f1_score_by_round = {}
         self.loss_by_round = {}
+        self.stg = stg
 
         self.load_data()
 
@@ -56,14 +60,47 @@ class VeremiServer(VeremiBase):
                 self.best_f1_score = df['f1score'][0]
 
     def strategy(self):
-        self.server_strategy = VeremiFedAvg(    ## here: change the strategy to use the other models on models.txt and compare results
-            fraction_fit=Config.fraction_fit,
-            min_available_clients=Config.min_available_clients,
-            evaluate_fn=self.get_evaluate_fn(),
-            on_fit_config_fn=self.get_config_fn(),
-            output_path=self.output_path,
-            min_evaluate_clients=Config.min_evaluate_clients,
-        )
+        if self.stg == "avg":
+            print('Aggregation model selected: FedAvg')
+            self.server_strategy = VeremiFedAvg(
+                fraction_fit=Config.fraction_fit,
+                min_available_clients=Config.min_available_clients,
+                evaluate_fn=self.get_evaluate_fn(),
+                on_fit_config_fn=self.get_config_fn(),
+                output_path=self.output_path,
+                min_evaluate_clients=Config.min_evaluate_clients,
+            )
+        elif self.stg == "avgm":
+            print('Aggregation model selected: FedAvgMomentum')
+            self.server_strategy = VeremiFedAvgM(
+                fraction_fit=Config.fraction_fit,
+                min_available_clients=Config.min_available_clients,
+                evaluate_fn=self.get_evaluate_fn(),
+                on_fit_config_fn=self.get_config_fn(),
+                output_path=self.output_path,
+                min_evaluate_clients=Config.min_evaluate_clients
+            )
+        elif self.stg == "krum":
+            print('Aggregation model selected: Krum')
+            self.server_strategy = VeremiKrum(
+                fraction_fit=Config.fraction_fit,
+                min_available_clients=Config.min_available_clients,
+                evaluate_fn=self.get_evaluate_fn(),
+                on_fit_config_fn=self.get_config_fn(),
+                output_path=self.output_path,
+                min_evaluate_clients=Config.min_evaluate_clients
+            )
+        elif self.stg == "fedtrimmed":
+            print('Aggregation model selected: FedTrimmedAvg')
+            self.server_strategy = VeremiFedTrimmedAvg(
+                fraction_fit=Config.fraction_fit,
+                min_available_clients=Config.min_available_clients,
+                evaluate_fn=self.get_evaluate_fn(),
+                on_fit_config_fn=self.get_config_fn(),
+                output_path=self.output_path,
+                min_evaluate_clients=Config.min_evaluate_clients
+            )
+
         return self.server_strategy
 
     def get_config_fn(self):
@@ -391,15 +428,37 @@ class VeremiServer(VeremiBase):
 
 if __name__ == "__main__":
     print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    in_filename = int(input("Escolha o arquivo de treino (0 - VeReMi_1.csv, 1 - VeReMi_2.csv, 2 - VeReMi_3.csv): "))
+    in_stg = int(input("Escolha a estratégia a ser usada (0 - FedAvg, 1 - FedAvgM, 2 - Krum, 3 - FedTrimmedAvg): "))
+
+    filename = ''
+    stg = ''
+
+    if in_filename == 0:
+        filename = 'VeReMi_1.csv'
+    elif in_filename == 1:
+        filename = 'VeReMi_2.csv'
+    elif in_filename == 2:
+        filename = 'VeReMi_3.csv'
+
+    if in_stg == 0:
+        stg = 'avg'
+    elif in_stg == 1:
+        stg = 'avgm'
+    elif in_stg == 2:
+        stg = 'krum'
+    elif in_stg == 3:
+        stg = 'fedtrimmed'
 
     server = VeremiServer(
-        data_file=Config.csv,
+        data_file=Config.csv + filename,
         model_type=Config.model_type,
         label=Config.label,
         feature=Config.feature,
         batch_size=Config.batch_size,
         epochs=Config.epochs,
-        activation=Config.output_activation
+        activation=Config.output_activation,
+        stg=stg
     )
 
     # Start the Flower Server

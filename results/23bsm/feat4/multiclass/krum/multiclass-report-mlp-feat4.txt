@@ -1,0 +1,14 @@
+Classification Report for multiclass-report-mlp-feat4
+              precision    recall  f1-score   support
+
+     class 0      0.841     0.954     0.894     22659
+     class 1      0.939     0.950     0.945      4478
+     class 2      0.848     0.837     0.842      4398
+     class 4      0.999     0.997     0.998      4444
+     class 8      0.770     0.662     0.712      4546
+    class 16      0.841     0.407     0.549      4623
+
+    accuracy                          0.861     45148
+   macro avg      0.873     0.801     0.823     45148
+weighted avg      0.860     0.861     0.851     45148
+----------------------------------------------------------------------

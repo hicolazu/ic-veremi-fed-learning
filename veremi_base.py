@@ -40,27 +40,21 @@ class VeremiBase(ABC):
     def create_model(self):
         layer1, layer2, layer3, layer4, layer5, layer6, layer7, layer8, layer9, output = \
             None, None, None, None, None, None, None, None, None, None
-        name = self.label + "-" + self.model_type + "-" + self.feature
         if self.model_type == 'mlp':
-            self.model = tf.keras.models.Sequential([
-                keras.layers.Input(shape=(self.train_data.shape[1],)),
-                keras.layers.Dense(48, activation="relu"),
-                keras.layers.Dropout(0.5),
-                keras.layers.Dense(24, activation="relu"),
-                # keras.layers.Dense(256, activation="relu"),
-                keras.layers.Dropout(0.5),
-                # keras.layers.Dense(128, activation="relu"),
-                # keras.layers.Dropout(0.25),
-                keras.layers.Dense(self.train_labels.shape[1], activation=self.activation)
-            ], name=name)
+            layer1 = keras.layers.Input(shape=(self.train_data.shape[1],))
+            layer2 = keras.layers.Dense(256, activation="relu")(layer1)
+            layer3 = keras.layers.Dense(256, activation="relu")(layer2)
+            layer4 = keras.layers.Dropout(0.5)(layer3)
+            output = keras.layers.Dense(self.train_labels.shape[1], activation=self.activation)(layer4)
         else:
             pass
 
         # ML Model
-        # self.model = keras.Model(inputs=layer1, outputs=output, name=name)
+        name = self.label + "-" + self.model_type + "-" + self.feature + ".keras"
+        self.model = keras.Model(inputs=layer1, outputs=output, name=name)
         self.model.compile(
-            loss=keras.losses.BinaryCrossentropy(),
-            optimizer=keras.optimizers.Nadam(learning_rate=Config.learning_rate),
+            loss=keras.losses.CategoricalCrossentropy(),
+            optimizer=keras.optimizers.Adam(learning_rate=Config.learning_rate),
             metrics=[f1]
         )
         self.model.summary()
